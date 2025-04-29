@@ -1,58 +1,52 @@
 import streamlit as st
 import folium
-from shapely.geometry import LineString, Polygon
 from streamlit_folium import st_folium
+from shapely.geometry import LineString, Polygon
+from geopy.geocoders import Nominatim
+from geopy.extra.rate_limiter import RateLimiter
 
-st.set_page_config(page_title="VTOL Path Planner - Drag & Drop", layout="wide")
-st.title("VTOL Flight Path Optimizer (Drag & Drop)")
+st.set_page_config(page_title="VTOL Flight Path Optimizer", layout="wide")
+st.title("VTOL Flight Path Optimizer (Address Entry)")
 
-# Predefined no-fly zones
+geolocator = Nominatim(user_agent="vtol_planner")
+geocode = RateLimiter(geolocator.geocode, min_delay_seconds=1)
+
 NO_FLY_ZONES = [
     Polygon([(-122.42, 37.77), (-122.41, 37.77), (-122.41, 37.78), (-122.42, 37.78)]),
     Polygon([(-122.39, 37.79), (-122.38, 37.79), (-122.38, 37.80), (-122.39, 37.80)])
 ]
 
-# Default coordinates
-start_coords = [37.776, -122.418]
-end_coords = [37.794, -122.385]
+with st.form("address_form"):
+    st.subheader("Enter Start and End Addresses")
+    start_addr = st.text_input("Start Address", "1600 Amphitheatre Parkway, Mountain View, CA")
+    end_addr   = st.text_input("End Address", "1 Infinite Loop, Cupertino, CA")
+    submitted  = st.form_submit_button("Plan Route")
 
-# Build map
-m = folium.Map(location=[37.78, -122.41], zoom_start=14)
+if submitted:
+    loc1 = geocode(start_addr)
+    loc2 = geocode(end_addr)
+    if not loc1 or not loc2:
+        st.error("Could not geocode one or both addresses. Please refine them.")
+    else:
+        start = (loc1.latitude, loc1.longitude)
+        end   = (loc2.latitude, loc2.longitude)
 
-# No-fly zones
-for zone in NO_FLY_ZONES:
-    folium.Polygon(locations=[(lat, lon) for lon, lat in zone.exterior.coords],
-                   color='red', tooltip="No-Fly Zone").add_to(m)
+        path = LineString([start, end])
+        blocked = any(zone.intersects(path) for zone in NO_FLY_ZONES)
 
-# Add draggable markers
-start_marker = folium.Marker(location=start_coords, draggable=True, popup="Start", icon=folium.Icon(color="green"))
-end_marker = folium.Marker(location=end_coords, draggable=True, popup="End", icon=folium.Icon(color="blue"))
-start_marker.add_to(m)
-end_marker.add_to(m)
+        m = folium.Map(location=start, zoom_start=12)
+        for zone in NO_FLY_ZONES:
+            folium.Polygon(
+                locations=[(lat, lon) for lon, lat in zone.exterior.coords],
+                color="red", fill=True, fill_opacity=0.3
+            ).add_to(m)
 
-# Display map
-st.markdown("**Drag the start and end markers to desired locations.**")
-map_data = st_folium(m, height=500)
+        folium.Marker(start, tooltip="Start", icon=folium.Icon(color="green")).add_to(m)
+        folium.Marker(end, tooltip="End", icon=folium.Icon(color="blue")).add_to(m)
+        folium.PolyLine(locations=[start, end],
+                        color="green" if not blocked else "orange",
+                        weight=4, opacity=0.8).add_to(m)
 
-# Capture user-submitted marker positions
-if st.button("Evaluate Flight Path"):
-    start = start_coords
-    end = end_coords
-
-    if map_data and "last_object_clicked" in map_data:
-        st.warning("Map interactions are limited to initial marker positions for now.")
-    
-    path_line = LineString([start, end])
-    blocked = any(zone.intersects(path_line) for zone in NO_FLY_ZONES)
-
-    m2 = folium.Map(location=start, zoom_start=14)
-    for zone in NO_FLY_ZONES:
-        folium.Polygon(locations=[(lat, lon) for lon, lat in zone.exterior.coords],
-                       color='red', tooltip="No-Fly Zone").add_to(m2)
-    folium.Marker(start, tooltip="Start", icon=folium.Icon(color="green")).add_to(m2)
-    folium.Marker(end, tooltip="End", icon=folium.Icon(color="blue")).add_to(m2)
-    folium.PolyLine([start, end], color="orange" if blocked else "green").add_to(m2)
-
-    st.subheader("Flight Path Result")
-    st_folium(m2, height=500)
-    st.info("Path intersects a no-fly zone!" if blocked else "Path is clear.")
+        st.subheader("Route Result")
+        st_folium(m, height=500)
+        st.info("⚠️ Path intersects a no-fly zone!" if blocked else "✅ Path is clear.")

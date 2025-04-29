@@ -1,16 +1,18 @@
-# VTOL Flight Path Optimizer (Drag & Drop)
+# VTOL Flight Path Optimizer (Address Entry)
 
-Drag markers on a map to simulate a VTOL flight route and detect intersections with simulated no-fly zones.
+This mobile-friendly Streamlit app lets users enter real addresses, geocodes them to coordinates, and simulates VTOL routing with no-fly zone detection.
 
 ## Features
-- Draggable start and end markers
-- Color-coded path checking
-- Visual overlay of no-fly zones
+- Address input instead of coordinates
+- Geocoding via OpenStreetMap
+- Visual routing and conflict checking
+- Mobile-friendly UI
 
-## Tech
+## Stack
 - Streamlit
 - Folium
 - Shapely
+- Geopy
 
 ## License
 MIT
