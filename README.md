@@ -1,16 +1,17 @@
 # VTOL Flight Path Optimizer
 
-A lightweight simulation app for VTOL urban routing. Users can click two points on a map to simulate a direct flight path, and the app checks if that path intersects with predefined no-fly zones.
+This Streamlit app simulates VTOL (Vertical Take-Off and Landing) aircraft routing in an urban environment. It allows users to click two points on a map and checks for conflicts with simulated no-fly zones using geometric path validation.
 
 ## Features
-- Interactive map with route planning
-- Simulated no-fly zone overlays
-- Real-time route validation
+- Interactive map input
+- Start and end location selection
+- Route visualization and conflict detection
+- No-fly zone overlays
 
 ## Tech Stack
 - Streamlit
-- Folium
-- Shapely (for geometry)
+- Folium & streamlit-folium
+- Shapely (geometry)
 
 ## License
 MIT
