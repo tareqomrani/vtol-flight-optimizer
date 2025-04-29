@@ -1,16 +1,16 @@
-# VTOL Flight Path Optimizer
+# VTOL Flight Path Optimizer (Drag & Drop)
 
-A lightweight simulation app for VTOL routing in urban areas. Users click two points on a map and the app checks if a straight path intersects any predefined no-fly zones.
+Drag markers on a map to simulate a VTOL flight route and detect intersections with simulated no-fly zones.
 
 ## Features
-- Click-based route simulation
-- No-fly zone overlays
-- Conflict detection and live map updates
+- Draggable start and end markers
+- Color-coded path checking
+- Visual overlay of no-fly zones
 
-## Tech Stack
+## Tech
 - Streamlit
 - Folium
-- Shapely (LineString)
+- Shapely
 
 ## License
 MIT
