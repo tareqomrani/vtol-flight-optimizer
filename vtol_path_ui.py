@@ -1,7 +1,7 @@
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Point, Polygon, LineString
 
 st.set_page_config(page_title="VTOL Flight Path Optimizer", layout="wide")
 st.title("VTOL Flight Path Optimizer (Urban Routing)")
@@ -32,7 +32,7 @@ if map_data and map_data["last_clicked"]:
         start = st.session_state.start
         st.session_state.start = None
 
-        path_line = Polygon([start, end])
+        path_line = LineString([start, end])
         blocked = any(zone.intersects(path_line) for zone in NO_FLY_ZONES)
 
         m = folium.Map(location=start, zoom_start=14)
