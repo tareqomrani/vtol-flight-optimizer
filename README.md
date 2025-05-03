@@ -1,18 +1,18 @@
-# VTOL Flight Path Optimizer (Address Entry)
+# Regulatory-Aware VTOL Flight Path Optimizer
 
-This mobile-friendly Streamlit app lets users enter real addresses, geocodes them to coordinates, and simulates VTOL routing with no-fly zone detection.
+This module demonstrates how to visualize and plan VTOL routes while avoiding restricted FAA airspace using shapefiles for Class B, C, and D airspaces.
 
 ## Features
-- Address input instead of coordinates
-- Geocoding via OpenStreetMap
-- Visual routing and conflict checking
-- Mobile-friendly UI
+- FAA shapefile loading
+- Interactive map display
+- Ready for integration into a full optimizer app
 
-## Stack
-- Streamlit
-- Folium
-- Shapely
-- Geopy
+## Setup
+1. Place the FAA shapefiles in the `data/` directory (create this folder if needed).
+2. Run the Streamlit app using:
+```bash
+streamlit run regulatory_aware_vtol.py
+```
 
-## License
-MIT
+## Notes
+- You can download FAA shapefiles [here](https://adds-faa.opendata.arcgis.com/datasets/class-airspace).
