@@ -1,33 +1,41 @@
+
 import streamlit as st
-from geopy.geocoders import Nominatim
-from geopy.exc import GeocoderTimedOut
-import folium
-from streamlit_folium import st_folium
+import pydeck as pdk
+from routing import get_optimized_path
+from weather_utils import fetch_weather_data
 
-def geocode_address(address):
-    geolocator = Nominatim(user_agent="vtol_app", timeout=10)
-    try:
-        location = geolocator.geocode(address)
-        if location:
-            return (location.latitude, location.longitude)
-    except GeocoderTimedOut:
-        return None
-    return None
-
-st.set_page_config(page_title="VTOL Flight Path Optimizer", layout="centered")
+st.set_page_config(page_title="VTOL Flight Optimizer", layout="wide")
 st.title("VTOL Flight Path Optimizer")
 
-start_address = st.text_input("Enter start address", "Orlando, FL")
-end_address = st.text_input("Enter end address", "Miami, FL")
+start = st.text_input("Start (lat, lon)", "28.5383, -81.3792")
+end = st.text_input("End (lat, lon)", "28.3852, -81.5639")
+altitude = st.slider("Cruise Altitude (meters)", 100, 500, 300)
+use_weather = st.checkbox("Optimize using real-time weather data", value=True)
 
-start_coords = geocode_address(start_address)
-end_coords = geocode_address(end_address)
+if st.button("Optimize Path"):
+    start_coords = tuple(map(float, start.split(',')))
+    end_coords = tuple(map(float, end.split(',')))
 
-if start_coords and end_coords:
-    m = folium.Map(location=start_coords, zoom_start=6)
-    folium.Marker(location=start_coords, popup="Start", icon=folium.Icon(color="green")).add_to(m)
-    folium.Marker(location=end_coords, popup="End", icon=folium.Icon(color="red")).add_to(m)
-    folium.PolyLine(locations=[start_coords, end_coords], color="blue").add_to(m)
-    st_folium(m, width=700, height=500)
-else:
-    st.error("Could not geocode one or both addresses. Please try again with valid US addresses.")
+    path = get_optimized_path(start_coords, end_coords, altitude, use_weather)
+
+    st.pydeck_chart(pdk.Deck(
+        map_style="mapbox://styles/mapbox/light-v9",
+        initial_view_state=pdk.ViewState(
+            latitude=(start_coords[0] + end_coords[0]) / 2,
+            longitude=(start_coords[1] + end_coords[1]) / 2,
+            zoom=10,
+            pitch=50,
+        ),
+        layers=[
+            pdk.Layer(
+                "PathLayer",
+                data=[{"path": path, "name": "VTOL Route"}],
+                get_path="path",
+                get_color=[0, 0, 255],
+                width_scale=20,
+                width_min_pixels=2,
+                get_width=5,
+                pickable=True,
+            )
+        ],
+    ))
