@@ -1,41 +1,40 @@
 
 import streamlit as st
-import pydeck as pdk
-from routing import get_optimized_path
-from weather_utils import fetch_weather_data
+import requests
+import folium
+from streamlit_folium import st_folium
+from shapely.geometry import LineString
+import geopandas as gpd
 
-st.set_page_config(page_title="VTOL Flight Optimizer", layout="wide")
+st.set_page_config(page_title="VTOL Route Optimizer", layout="wide")
+
+def geocode(address):
+    url = "https://nominatim.openstreetmap.org/search"
+    params = {"q": address, "format": "json"}
+    response = requests.get(url, params=params)
+    if response.status_code == 200 and response.json():
+        data = response.json()[0]
+        return float(data["lat"]), float(data["lon"])
+    else:
+        return None
+
 st.title("VTOL Flight Path Optimizer")
 
-start = st.text_input("Start (lat, lon)", "28.5383, -81.3792")
-end = st.text_input("End (lat, lon)", "28.3852, -81.5639")
-altitude = st.slider("Cruise Altitude (meters)", 100, 500, 300)
-use_weather = st.checkbox("Optimize using real-time weather data", value=True)
+start_address = st.text_input("Start Address", placeholder="Enter starting location")
+end_address = st.text_input("End Address", placeholder="Enter destination")
 
-if st.button("Optimize Path"):
-    start_coords = tuple(map(float, start.split(',')))
-    end_coords = tuple(map(float, end.split(',')))
+if start_address and end_address:
+    start_coords = geocode(start_address)
+    end_coords = geocode(end_address)
 
-    path = get_optimized_path(start_coords, end_coords, altitude, use_weather)
+    if start_coords and end_coords:
+        st.success(f"Start: {start_coords}, End: {end_coords}")
 
-    st.pydeck_chart(pdk.Deck(
-        map_style="mapbox://styles/mapbox/light-v9",
-        initial_view_state=pdk.ViewState(
-            latitude=(start_coords[0] + end_coords[0]) / 2,
-            longitude=(start_coords[1] + end_coords[1]) / 2,
-            zoom=10,
-            pitch=50,
-        ),
-        layers=[
-            pdk.Layer(
-                "PathLayer",
-                data=[{"path": path, "name": "VTOL Route"}],
-                get_path="path",
-                get_color=[0, 0, 255],
-                width_scale=20,
-                width_min_pixels=2,
-                get_width=5,
-                pickable=True,
-            )
-        ],
-    ))
+        m = folium.Map(location=start_coords, zoom_start=13)
+        folium.Marker(start_coords, tooltip="Start", icon=folium.Icon(color="green")).add_to(m)
+        folium.Marker(end_coords, tooltip="End", icon=folium.Icon(color="red")).add_to(m)
+        folium.PolyLine([start_coords, end_coords], color="blue", weight=4).add_to(m)
+
+        st_folium(m, width=700, height=500)
+    else:
+        st.error("Could not find one or both addresses. Please try again.")
