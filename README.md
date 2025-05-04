@@ -2,21 +2,15 @@
 
 # VTOL Flight Path Optimizer
 
-The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to simulate and plan low-altitude urban air routes. Designed with mobile users in mind, the app allows you to drag and drop start and end points on an interactive map, adjust cruise altitude, and visualize optimized paths for VTOL (Vertical Take-Off and Landing) aircraft.
-
-> **Note:** Currently, the app uses latitude and longitude coordinate input. Drag-and-drop routing and address-based entry will be added in future releases.
-
----
+The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to simulate and plan low-altitude urban air routes. Designed with mobile users in mind, the app currently uses latitude and longitude input, but will soon support drag-and-drop route planning and address entry.
 
 ## Features
 
-- Drag-and-drop route planning on an interactive map (coming soon)
+- Latitude and longitude-based route planning (address input and drag-and-drop coming soon)
 - Cruise altitude selection
 - Real-time path visualization
 - Mobile-friendly interface
 - Regulatory-aware routing (coming soon)
-
----
 
 ## How to Use
 
@@ -24,8 +18,6 @@ The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to
 2. Enter your start and end coordinates.
 3. Select your desired cruise altitude.
 4. Click "Optimize Route" to view the suggested path.
-
----
 
 ## Tech Stack
 
@@ -35,8 +27,6 @@ The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to
 - Shapely & GeoPandas
 - FAA dataset integration (in progress)
 
----
-
 ## Future Enhancements
 
 - Drag-and-drop pins and address-based routing
@@ -44,8 +34,6 @@ The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to
 - Energy modeling
 - Full regulatory dataset overlay
 - Exportable flight plans
-
----
 
 ## FAA Dataset Integration
 
@@ -55,8 +43,6 @@ We are integrating FAA regulatory data to help users avoid **no-fly zones and re
 
 - [FAA Special Use Airspace Dataset (ArcGIS)](https://hub.arcgis.com/datasets/faa::special-use-airspace/about)
 - [FAA National Security UAS Flight Restrictions](https://udds-faa.opendata.arcgis.com/datasets/faa::national-security-uas-flight-restrictions-1/about)
-
----
 
 ## License
 
