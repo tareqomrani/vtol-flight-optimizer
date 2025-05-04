@@ -1,41 +1,42 @@
-
 import streamlit as st
-import pydeck as pdk
-from routing import get_optimized_path
-from weather_utils import fetch_weather_data
+from vtol_path_optimizer import optimize_path  # Assuming your logic is in this module
 
-st.set_page_config(page_title="VTOL Flight Optimizer", layout="wide")
+st.set_page_config(page_title="VTOL Flight Path Optimizer", layout="centered")
+
 st.title("VTOL Flight Path Optimizer")
 
-start = st.text_input("Start (lat, lon)", "28.5383, -81.3792")
-end = st.text_input("End (lat, lon)", "28.3852, -81.5639")
-altitude = st.slider("Cruise Altitude (meters)", 100, 500, 300)
-use_weather = st.checkbox("Optimize using real-time weather data", value=True)
+st.markdown("Enter the coordinates below to optimize your VTOL flight path.")
 
-if st.button("Optimize Path"):
-    start_coords = tuple(map(float, start.split(',')))
-    end_coords = tuple(map(float, end.split(',')))
+def parse_coords(label):
+    coord_input = st.text_input(f"Enter {label} coordinates (format: `latitude,longitude`):")
+    if coord_input:
+        try:
+            lat_str, lon_str = coord_input.strip().split(',')
+            return float(lat_str.strip()), float(lon_str.strip())
+        except Exception:
+            st.error(f"Invalid {label} coordinates. Use the format: `latitude,longitude` (e.g., `34.0522,-118.2437`).")
+            st.stop()
+    return None
 
-    path = get_optimized_path(start_coords, end_coords, altitude, use_weather)
+start_coords = parse_coords("start")
+end_coords = parse_coords("end")
 
-    st.pydeck_chart(pdk.Deck(
-        map_style="mapbox://styles/mapbox/light-v9",
-        initial_view_state=pdk.ViewState(
-            latitude=(start_coords[0] + end_coords[0]) / 2,
-            longitude=(start_coords[1] + end_coords[1]) / 2,
-            zoom=10,
-            pitch=50,
-        ),
-        layers=[
-            pdk.Layer(
-                "PathLayer",
-                data=[{"path": path, "name": "VTOL Route"}],
-                get_path="path",
-                get_color=[0, 0, 255],
-                width_scale=20,
-                width_min_pixels=2,
-                get_width=5,
-                pickable=True,
-            )
-        ],
-    ))
+if start_coords and end_coords:
+    if st.button("Optimize Flight Path"):
+        with st.spinner("Calculating optimal path..."):
+            try:
+                optimized_route = optimize_path(start_coords, end_coords)
+
+                st.success("Flight path optimized!")
+                st.write("Optimized Route Coordinates:")
+                st.code(str(optimized_route))
+
+                # Optionally display on a map if you have lat/lon pairs
+                try:
+                    st.map(data={"lat": [pt[0] for pt in optimized_route],
+                                 "lon": [pt[1] for pt in optimized_route]})
+                except Exception:
+                    st.warning("Map view skipped: output format may not be suitable for plotting.")
+            except Exception as e:
+                st.error("An error occurred while optimizing the flight path.")
+                st.exception(e)
