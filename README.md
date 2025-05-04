@@ -1,12 +1,12 @@
-![VTOL Optimizer Banner](./assets/vtol_banner.png)
+![VTOL Banner](vtol-banner.png)
 
 # VTOL Flight Path Optimizer
 
-The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to simulate and plan low-altitude urban air routes. Designed with mobile users in mind, the app allows you to select start and end coordinates via latitude and longitude input. A future update will allow drag-and-drop route planning and address entry on an interactive map.
+The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to simulate and plan low-altitude urban air routes. Designed with mobile users in mind, the app currently requires you to input latitude and longitude coordinates, but future updates will include address entry and drag-and-drop functionality.
 
 ## Features
 
-- Latitude and longitude-based route input (drag-and-drop and address entry coming soon)
+- Latitude and longitude route planning (address input and drag-and-drop coming soon)
 - Cruise altitude selection
 - Real-time path visualization
 - Mobile-friendly interface
@@ -15,7 +15,7 @@ The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to
 ## How to Use
 
 1. Open the app in your browser or mobile device.
-2. Enter the start and end coordinates (latitude and longitude).
+2. Enter your start and end coordinates.
 3. Select your desired cruise altitude.
 4. Click Optimize Route to view the suggested path.
 
@@ -29,15 +29,17 @@ The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to
 
 ## Future Enhancements
 
-- Drag-and-drop route planning
-- Address autocomplete input
+- Drag-and-drop and address-based inputs
 - Real-time obstacle and weather integration
 - Energy modeling
 - Full regulatory dataset overlay
 - Exportable flight plans
 
-**Try it live**: [Your Streamlit App Link]  
-**License**: MIT
-
 ## Notes
-- FAA datasets are being integrated from [FAA Data Portal](https://www.faa.gov/data-research).
+
+- The FAA dataset will enable users to avoid no-fly zones and restricted airspace.
+- FAA data source (download manually): https://nfdc.faa.gov/webContent/28DaySub/2025-04-18.zip
+
+## License
+
+MIT
