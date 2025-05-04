@@ -1,4 +1,4 @@
-![VTOL Optimizer Banner](vtol_banner.png)
+![VTOL Banner](vtol-banner.png)
 
 # VTOL Flight Path Optimizer
 
