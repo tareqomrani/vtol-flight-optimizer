@@ -1,5 +1,4 @@
-
-![VTOL Optimizer Banner](vtol_banner.png)
+![VTOL Optimizer Banner](banner.png)
 
 # VTOL Flight Path Optimizer
 
@@ -12,6 +11,29 @@ The VTOL Flight Path Optimizer is a Streamlit-based web app that allows users to
 - Real-time path visualization
 - Mobile-friendly interface
 - Regulatory-aware routing (coming soon)
+
+## How to Use
+
+1. Open the app in your browser or mobile device.
+2. Enter your start and end coordinates.
+3. Select your desired cruise altitude.
+4. Click "Optimize Route" to view the suggested path.
+
+## Tech Stack
+
+- Python
+- Streamlit
+- Leaflet.js (via Streamlit components)
+- Shapely & GeoPandas
+- FAA dataset integration (in progress)
+
+## Future Enhancements
+
+- Drag-and-drop pins and address-based routing
+- Real-time obstacle and weather integration
+- Energy modeling
+- Full regulatory dataset overlay
+- Exportable flight plans
 
 ## FAA Dataset Integration
 
